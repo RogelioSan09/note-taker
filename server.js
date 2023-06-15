@@ -3,6 +3,7 @@ const express = require('express');
 const {v4 : uuidv4} = require('uuid')
 const fs = require('fs');
 const path = require('path');
+const notes = require('./db/db.json');
 
 const app = express();
 const PORT = process.env.port || 3001;
@@ -12,22 +13,20 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
-// Routes
+// Route to main page
 app.get('/', (req, res) =>
   res.sendFile(path.join(__dirname, 'public/assets/html/index.html'))
 );
 
-// // GET Route for notes page
+// GET Route for notes page
 app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, 'public/assets/html/notes.html'))
 );
 
-app.get('/api/notes', (req, res) => {
-    res.status(200).json(`${req.method} request received to get notes.`);
-    console.info(`${req.method} request received to get notes.`);
-    return data;
-});
+// GET Route for retrieving all the notes
+app.get('/api/notes', (req, res) => res.json(notes));
 
+// POST Route for a new note
 app.post('/api/notes', (req, res) => {
     console.info(`${req.method} request received to add a note.`);
 
@@ -46,20 +45,20 @@ app.post('/api/notes', (req, res) => {
         };
     
         // Will obtain any existing notes if any are available.
-        fs.readFile('./db/notes.json', 'utf8', (err, data) => {
+        fs.readFile('./db/db.json', 'utf8', (err, notes) => {
             if (err) {
                 console.error(err);
                 // return res.status(500).json('Error in posting note');
             } else {
                 // Convert string into JSON object
-                const parsedNotes = JSON.parse(data);
+                const parsedNotes = JSON.parse(notes);
         
                 // Add a new note
                 parsedNotes.push(newNote);
         
                 // Write the updated notes back to the file
                 fs.writeFile(
-                    './db/notes.json',
+                    './db/db.json',
                     JSON.stringify(parsedNotes, null, 4),
                     (writeErr) =>
                     writeErr
