@@ -33,7 +33,6 @@ app.post('/api/notes', (req, res) => {
     // Destructuring assignment for the properties in req.body
     const {title, text} = req.body;
 
-    const noteId = uuidv4();
     // Execute operation when the required properties are present.
     if (title && text) {
 
@@ -41,17 +40,17 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title,
             text,
-            noteId
+            note_id: uuidv4(),
         };
     
         // Will obtain any existing notes if any are available.
-        fs.readFile('./db/db.json', 'utf8', (err, notes) => {
+        fs.readFile('./db/db.json', 'utf8', (err, data) => {
             if (err) {
                 console.error(err);
                 // return res.status(500).json('Error in posting note');
             } else {
                 // Convert string into JSON object
-                const parsedNotes = JSON.parse(notes);
+                const parsedNotes = JSON.parse(data);
         
                 // Add a new note
                 parsedNotes.push(newNote);
@@ -64,8 +63,6 @@ app.post('/api/notes', (req, res) => {
                     writeErr
                         ? console.error(writeErr)
                         : console.info('Successfully updated notes!'),
-                    res.status(201).json(response),
-                    console.log(response)
                 );
             }
         });
@@ -74,6 +71,9 @@ app.post('/api/notes', (req, res) => {
             status: 'success',
             body: newNote,
         };
+
+        console.log(response);
+        res.status(201).json(response);
     } else {
         res.status(500).json('Error in posting note!!');
     }
