@@ -3,7 +3,6 @@ const express = require('express');
 const {v4 : uuidv4} = require('uuid')
 const fs = require('fs');
 const path = require('path');
-const notes = require('./db/db.json');
 
 const app = express();
 const PORT = process.env.port || 3001;
@@ -24,7 +23,17 @@ app.get('/notes', (req, res) =>
 );
 
 // GET Route for retrieving all the notes
-app.get('/api/notes', (req, res) => res.json(notes));
+app.get('/api/notes', (req, res) => 
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            // return res.status(500).json('Error in retrieving notes');
+        } else {
+            console.log('Notes retrieved successfully!');
+            res.json(JSON.parse(data));
+        }
+    })
+);
 
 // POST Route for a new note
 app.post('/api/notes', (req, res) => {
