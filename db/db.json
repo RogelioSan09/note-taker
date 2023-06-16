@@ -32,5 +32,10 @@
         "title": "hi",
         "text": "again",
         "note_id": "6db418dc-f4ab-43bf-a377-65d848765e37"
+    },
+    {
+        "title": "Demo",
+        "text": "Save note",
+        "note_id": "a5d202a1-7c1b-4020-b38f-a6bb3c53c399"
     }
 ]
